@@ -72,7 +72,6 @@ vector<vector<string>> expandEmptySpaces(int x, int y, vector<vector<string>> bo
     if(maskedBoard[x][y] != " "){
         return maskedBoard;
     }
-    printMatrix(maskedBoard);
     for (int k = -1; k < 2; k++)
     {
         for (int h = -1; h < 2; h++)
@@ -134,7 +133,7 @@ int main()
         stringstream ss(line);
         int x = -1, y = -1;
         ss >> x >> y;
-        if (x != -1 && y != -1)
+        if (x >= 0 && x < boardSize && y >= 0 && y < boardSize)
         {
             maskedBoard = revealInMaskedBoard(x, y, board, maskedBoard);
             if (maskedBoard[x][y] == "B")
