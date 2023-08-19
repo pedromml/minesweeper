@@ -2,10 +2,6 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <map>
-#include <iterator>
-#include <set>
-#include <tuple>
 #include <sstream>
 using namespace std;
 
@@ -115,7 +111,6 @@ int main()
     int boardSize = 16;
     vector<vector<string>> board(boardSize + 2, vector<string>(boardSize + 2, "0"));
 
-    // ███
     board = randomSwapXItemsTo(board, boardSize * boardSize / 6, "B");
     board = calculateNumberOfBombsAroundTiles(board);
 
