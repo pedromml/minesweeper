@@ -1,26 +1,29 @@
+#include <unistd.h>
+
 #include <algorithm>
 #include <iostream>
 #include <random>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <unistd.h>
-#pragma once
+
 #include "board.h"
+#pragma once
 using namespace std;
 
 class Solver {
-    Board board;
+    Board* board;
     vector<vector<string>> workingBoard;
     vector<string> safeMoves;
 
    public:
-    Solver(Board board) : board(board) {
-        this->workingBoard = board.maskedBoard;
+    Solver(Board* board) {
+        this->board = board;
+        this->workingBoard = this->board->maskedBoard;
     }
 
-    void solve() {
-        solveLoop();
+    int solve() {
+        return solveLoop();
     }
 
    private:
@@ -52,16 +55,19 @@ class Solver {
         return true;
     }
 
-    void solveLoop() {
+    int solveLoop() {
         while (1) {
+            int success = -1;
             printf("\x1B[2J");
             printf("\x1B[H");
-            board.printMaskedBoard();
+            board->printMaskedBoard();
+            if (board->didWin()) {
+                return 1;
+            }
             usleep(300000);
-            int success = 0;
 
             vector<vector<string>> n = copyMatrix(workingBoard);
-            updateWorkingBoard(board.maskedBoard);
+            updateWorkingBoard(board->maskedBoard);
             while (1) {
                 vector<vector<string>> m = copyMatrix(workingBoard);
                 markBombs();
@@ -74,24 +80,20 @@ class Solver {
                 stringstream ss(move);
                 int x = -1, y = -1;
                 ss >> x >> y;
-                success = board.revealTile(x, y);
+                success = board->revealTile(x, y);
             }
-            updateWorkingBoard(board.maskedBoard);
+            updateWorkingBoard(board->maskedBoard);
 
             string unsafeMove = pickRandomMaskedTile();
             stringstream ss(unsafeMove);
             int x = -1, y = -1;
             ss >> x >> y;
-            success = board.revealTile(x, y);
+            success = board->revealTile(x, y);
 
             if (!success) {
-                printf("\x1B[2J");
-                printf("\x1B[H");
-                board.printMaskedBoard();
-                cout << "You lose!" << endl;
-                break;
+                cout << "AAA" << endl;
+                return 0;
             }
-            
         }
     }
 
@@ -104,9 +106,12 @@ class Solver {
                 }
             }
         }
+        if (unsafeMoves.size() <= 0) {
+            return "";
+        }
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_int_distribution<> distr(0, unsafeMoves.size());
+        std::uniform_int_distribution<> distr(0, unsafeMoves.size() - 1);
         string move = unsafeMoves[distr(gen)];
         return move;
     }
@@ -160,7 +165,7 @@ class Solver {
                             }
                         }
                     }
-                    int newTileValue = stoi(board.maskedBoard[i][j]) - markedBombTileCount;
+                    int newTileValue = stoi(board->maskedBoard[i][j]) - markedBombTileCount;
                     if (newTileValue == 0) {
                         for (int h = -1; h < 2; h++) {
                             for (int k = -1; k < 2; k++) {

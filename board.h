@@ -45,6 +45,17 @@ class Board {
         }
     }
 
+    bool didWin() {
+        for (size_t i = 1; i < board.size() - 1; i++) {
+            for (size_t j = 1; j < board[0].size() - 1; j++) {
+                if (maskedBoard[i - 1][j - 1] != board[i][j] && board[i][j] != "B") {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
    private:
     vector<vector<string>> board;
 

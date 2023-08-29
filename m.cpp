@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+
 #include "board.h"
 #include "solver.h"
 using namespace std;
@@ -20,28 +21,39 @@ int main() {
     int boardSize = 16;
     Board board = Board(boardSize);
 
-    Solver solver = Solver(board);
-
-    solver.solve();
-
-    // string line;
-
-    // while (1) {
-    //     board.printMaskedBoard();
-    //     getline(cin, line);
-    //     if (line == "exit") {
-    //         break;
-    //     }
-    //     stringstream ss(line);
-    //     int x = -1, y = -1;
-    //     ss >> x >> y;
-    //     int sucess = board.revealTile(x, y);
-    //     if(!sucess){
-    //         board.printMaskedBoard();
-    //         cout << "You lose!" << endl;
-    //         break;
-    //     }
-    // }
+    string line;
+    while (1) {
+        line = "";
+        int success = 0;
+        printf("\x1B[2J");
+        printf("\x1B[H");
+        board.printMaskedBoard();
+        cout << "Type \"solve\" to solve, \"exit\" to exit" << endl;
+        getline(cin, line);
+        if (line == "exit") {
+            break;
+        }
+        if (line == "solve") {
+            Solver solver = Solver(&board);
+            success = solver.solve();
+        } else {
+            stringstream ss(line);
+            int x = -1, y = -1;
+            ss >> x >> y;
+            success = board.revealTile(x, y);
+        }
+        if (board.didWin()) {
+            cout << "You won!" << endl;
+            break;
+        }
+        if (!success) {
+            printf("\x1B[2J");
+            printf("\x1B[H");
+            board.printMaskedBoard();
+            cout << "You lose!" << endl;
+            break;
+        }
+    }
 
     return 0;
 }
