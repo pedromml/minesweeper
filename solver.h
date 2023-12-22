@@ -60,7 +60,7 @@ class Solver {
             int success = -1;
             printf("\x1B[2J");
             printf("\x1B[H");
-            board->printMaskedBoard();
+            board-> printMaskedBoard();
             if (board->didWin()) {
                 return 1;
             }
